@@ -2838,9 +2838,7 @@ bool lcd_calibrate_z_end_stop_manual(bool only_z)
 calibrated:
     // Let the machine think the Z axis is a bit higher than it is, so it will not home into the bed
     // during the search for the induction points.
-	
-    current_position[Z_AXIS] = Z_MAX_POS-3.f;
-    
+	current_position[Z_AXIS] = Z_MAX_POS-3.f;
     plan_set_position_curposXYZE();
     return true;
 
