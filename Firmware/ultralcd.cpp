@@ -2642,13 +2642,23 @@ typedef struct
 	int16_t front;                   // 2byte
 	int16_t rear;                    // 2byte
 } _menu_data_adjust_bed_t;
-static_assert(sizeof(menu_data)>= sizeof(_menu_data_adjust_bed_t),"_menu_data_adjust_bed_t doesn't fit into menu_data");
+static_assert(sizeof(menu_data) >= sizeof(_menu_data_adjust_bed_t), "_menu_data_adjust_bed_t doesn't fit into menu_data");
+
+typedef struct
+{	// 12bytes + 9bytes = 21bytes total
+    menu_data_edit_t reserved; //12 bytes reserved for number editing functions
+    int8_t status;                   // 1byte
+    int16_t left;                    // 2byte
+    int16_t right;                   // 2byte
+    int16_t front;                   // 2byte
+    int16_t rear;                    // 2byte
+} _menu_data_adjust_bed_t;
 
 void lcd_adjust_bed_reset(void)
 {
-	eeprom_adjust_bed_reset();
-	_menu_data_adjust_bed_t* _md = (_menu_data_adjust_bed_t*)&(menu_data[0]);
-	_md->status = 0;
+    eeprom_adjust_bed_reset();
+    _menu_data_adjust_bed_t* _md = (_menu_data_adjust_bed_t*)&(menu_data[0]);
+    _md->status = 0;
 }
 
 //! @brief Show Bed level correct
@@ -5434,20 +5444,20 @@ static void lcd_tune_menu()
 		//! it needs to be applied.
 		int16_t extrudemultiply;
 	} _menu_data_t;
-	static_assert(sizeof(menu_data)>= sizeof(_menu_data_t),"_menu_data_t doesn't fit into menu_data");
-	_menu_data_t* _md = (_menu_data_t*)&(menu_data[0]);
-	if (_md->status == 0)
-	{
-		// Menu was entered. Mark the menu as entered and save the current extrudemultiply value.
-		_md->status = 1;
-		_md->extrudemultiply = extrudemultiply;
-	}
-	else if (_md->extrudemultiply != extrudemultiply)
-	{
-		// extrudemultiply has been changed from the child menu. Apply the new value.
-		_md->extrudemultiply = extrudemultiply;
-		calculate_extruder_multipliers();
-	}
+static_assert(sizeof(menu_data) >= sizeof(_menu_data_t), "_menu_data_t doesn't fit into menu_data");
+_menu_data_t* _md = (_menu_data_t*)&(menu_data[0]);
+if (_md->status == 0)
+{
+    // Menu was entered. Mark the menu as entered and save the current extrudemultiply value.
+    _md->status = 1;
+    _md->extrudemultiply = extrudemultiply;
+}
+else if (_md->extrudemultiply != extrudemultiply)
+{
+    // extrudemultiply has been changed from the child menu. Apply the new value.
+    _md->extrudemultiply = extrudemultiply;
+    calculate_extruder_multipliers();
+}
 
 	SilentModeMenu = eeprom_read_byte((uint8_t*) EEPROM_SILENT);
 
